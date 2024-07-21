@@ -1,12 +1,10 @@
 package com.br.restaurant.controller;
 
-import com.br.restaurant.domain.order.DataCreateOrder;
-import com.br.restaurant.domain.order.DataDetailsOrder;
-import com.br.restaurant.domain.order.Order;
-import com.br.restaurant.domain.order.OrderRepository;
+import com.br.restaurant.domain.order.*;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.annotation.ReadOnlyProperty;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -34,5 +32,28 @@ public class OrderController {
     public ResponseEntity<Page<DataDetailsOrder>> getAllOrders(@PageableDefault(size = 10,sort = "name") Pageable pageable){
         var page =orderRepository.findAllByActiveTrue(pageable).map(DataDetailsOrder::new);
         return ResponseEntity.ok(page);
+    }
+
+    @GetMapping("/{id}")
+    @ReadOnlyProperty
+    public ResponseEntity getOrderById(@PathVariable Long id){
+        var order=orderRepository.getReferenceById(id);
+        return ResponseEntity.ok(new DataDetailsOrder(order));
+    }
+
+    @PutMapping
+    @Transactional
+    public ResponseEntity updateOrder(@RequestBody @Valid DataUpdateOrder dataUpdateOrder){
+        var order = orderRepository.getReferenceById(dataUpdateOrder.id());
+        order.updateOrder(dataUpdateOrder);
+        return ResponseEntity.ok(new DataDetailsOrder(order));
+    }
+
+    @DeleteMapping("/{id}")
+    @Transactional
+    public ResponseEntity deleteOrder(@PathVariable Long id){
+        var order = orderRepository.getReferenceById(id);
+        order.logicDelete();
+        return ResponseEntity.noContent().build();
     }
 }

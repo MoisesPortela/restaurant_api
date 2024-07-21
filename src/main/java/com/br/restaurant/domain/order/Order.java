@@ -30,6 +30,21 @@ public class Order {
         this.price= dataCreateOrder.price();
     }
 
+    public void updateOrder(DataUpdateOrder dataUpdateOrder){
+        if (dataUpdateOrder.name()!=null){
+            this.name= dataUpdateOrder.name();
+        }
+        if (dataUpdateOrder.ingredients()!=null){
+            this.ingredients= dataUpdateOrder.ingredients();
+        }
+        if (dataUpdateOrder.type()!=null){
+            this.type= dataUpdateOrder.type();
+        }
+        if (dataUpdateOrder.price()!=null){
+            this.price= dataUpdateOrder.price();
+        }
+    }
+
     public void logicDelete(){
         this.active=false;
     }
